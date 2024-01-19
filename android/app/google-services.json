@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "702700694891",
+    "firebase_url": "https://vyroba-vecicky-test-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "vyroba-vecicky-test",
+    "storage_bucket": "vyroba-vecicky-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702700694891:android:7d0e068a05ab35b74d702e",
+        "android_client_info": {
+          "package_name": "com.example.e_telka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702700694891-9e3quvruh1o74sdjgbphrgviv59m5jd8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoIcHT094YLtJXomnjZcOPKfFGByuSl6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702700694891-9e3quvruh1o74sdjgbphrgviv59m5jd8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "702700694891-9va2rdov8gmrr5od6aansgnit2rbce4p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vecicky.vyrobaVecicky"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702700694891:android:986afb55796c88814d702e",
+        "android_client_info": {
+          "package_name": "com.example.vecicky.vyroba_vecicky"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702700694891-9e3quvruh1o74sdjgbphrgviv59m5jd8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoIcHT094YLtJXomnjZcOPKfFGByuSl6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702700694891-9e3quvruh1o74sdjgbphrgviv59m5jd8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "702700694891-9va2rdov8gmrr5od6aansgnit2rbce4p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vecicky.vyrobaVecicky"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
