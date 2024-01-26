@@ -1,6 +1,7 @@
 import 'package:e_telka/tasks/domain/entities/task.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
 import 'package:e_telka/tasks/presentation/widgets/sorting_widget.dart';
+import 'package:e_telka/tasks/presentation/widgets/task_detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -41,39 +42,37 @@ class _TasksPageState extends State<TasksPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final filterIcon = logic.areTasksFiltered
+        ? const Icon(Icons.filter_alt)
+        : const Icon(Icons.filter_alt_outlined);
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        tooltip: 'Vyberte filtry pro zobrazení úkolů',
-        isExtended: true,
-        onPressed: () {
-          _showFilterDialog(context).then((value) {
-            if (value == true) {
-              setState(() {
-                logic.areTasksFiltered = true;
-                logic.filterTasks();
-              });
-            } else if (value == false) {
-              setState(() {
-                logic.areTasksFiltered = false;
-                logic.disableFilters();
-              });
-            }
-          });
-        },
-        label: logic.areTasksFiltered ? Text('Filtrováno') : Text('Filtrovat') ,
-        icon: logic.areTasksFiltered ? const Icon(Icons.filter_alt) : const Icon(Icons.filter_alt_outlined),
-      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Center(child: Text('Etelka')),
+        title: const Center(child: Text('Moje úkoly')),
+        leading: IconButton(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+            Get.offAllNamed('/sign-in');
+          },
+          icon: const Icon(Icons.logout),
+        ),
         actions: [
           IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Get.offAllNamed('/sign-in');
-            },
-            icon: const Icon(Icons.logout),
-          ),
+              // onPressed: () {},
+              onPressed: () => _showFilterDialog(context).then((value) {
+                    if (value == true) {
+                      setState(() {
+                        logic.areTasksFiltered = true;
+                        logic.filterTasks();
+                      });
+                    } else if (value == false) {
+                      setState(() {
+                        logic.areTasksFiltered = false;
+                        logic.disableFilters();
+                      });
+                    }
+                  }),
+              icon: filterIcon),
         ],
       ),
       body: Center(
@@ -166,8 +165,12 @@ class _TasksPageState extends State<TasksPage> {
     } else {
       return Column(
         children: [
-          tasksSublistHeader(context, 'Nadcházející úkoly', colorScheme.onTertiaryContainer,
-              Icons.calendar_month, colorScheme.tertiaryContainer),
+          tasksSublistHeader(
+              context,
+              'Nadcházející úkoly',
+              colorScheme.onTertiaryContainer,
+              Icons.calendar_month,
+              colorScheme.tertiaryContainer),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -190,7 +193,6 @@ class _TasksPageState extends State<TasksPage> {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
       ),
-
       child: Row(
         children: [
           const SizedBox(
@@ -221,10 +223,19 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   Widget taskCard(BuildContext context, Task task) {
-    return Card(
-      child: ListTile(
-        title: Text('${task.taskId}: ${task.operation}'),
-        trailing: _buildConfirmButton(context, task),
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return TaskDetail(task: task);
+            });
+      },
+      child: Card(
+        child: ListTile(
+          title: Text('${task.taskId}: ${task.operation}'),
+          trailing: _buildConfirmButton(context, task),
+        ),
       ),
     );
   }
