@@ -7,15 +7,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class TasksController extends GetxController {
-  final TasksRepository tasksRepository =
-      Get.put<TasksRepository>(TasksRepositoryImpl());
+  final TasksRepository tasksRepository = Get.find();
 
-  final DateUtil dateUtil = Get.put<DateUtil>(DateUtil());
+  final DateUtil dateUtil = Get.find();
 
   Rx<TasksState> state = TasksState('TasksState').obs;
   var index = 0.obs;
   RxList<Task> tasks = <Task>[].obs;
   RxList<Task> allTasks = <Task>[].obs;
+
+  Task getFollowingTask(Task task) => tasksRepository.getFollowingTask(task);
+  Task getPreviouosTask(Task task) => tasksRepository.getPreviousTask(task);
   List<String> filteredOperations = <String>[];
   List<String> filteredStates = <String>['Zahájené úkoly', 'Nezahájené úkoly'];
   String selectedSortingFactor = 'Čísla úkolu';
@@ -42,23 +44,6 @@ class TasksController extends GetxController {
         allTasks.value.map((e) => e.operation).toSet().toList();
     filterTasks();
   }
-
-  bool isDateInCurrentWeek(DateTime date) {
-    // Získáme dnešní datum
-    DateTime today = DateTime.now();
-    // Zjistíme, jaký je dnes den v týdnu (0 = pondělí, 6 = neděle)
-    int weekday = today.weekday - 1;
-    // Spočítáme, kolik dní je od začátku týdne
-    int daysFromStartOfWeek = today.difference(today.subtract(Duration(days: weekday))).inDays;
-    // Spočítáme, kolik dní je do konce týdne
-    int daysToEndOfWeek = today.add(Duration(days: 6 - weekday)).difference(today).inDays;
-    // Vytvoříme interval, který reprezentuje aktuální týden
-    DateTime startOfWeek = today.subtract(Duration(days: daysFromStartOfWeek));
-    DateTime endOfWeek = today.add(Duration(days: daysToEndOfWeek));
-    // Zkontrolujeme, jestli zadané datum spadá do intervalu
-    return date.isAfter(startOfWeek) && date.isBefore(endOfWeek);
-  }
-
 
   Future<void> refreshTasks() async {
     allTasks.value = await tasksRepository.getUsersActiveTasks();

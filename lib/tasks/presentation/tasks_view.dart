@@ -195,28 +195,21 @@ class _TasksPageState extends State<TasksPage> {
       ),
       child: Row(
         children: [
-          const SizedBox(
-            width: 16,
-          ),
+          Expanded(
+              child: Center(
+            child: Text(title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall!
+                    .copyWith(color: color, fontFamily: 'Poppins')),
+          )),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+            padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
             child: Icon(
               iconData,
               color: color,
             ),
           ),
-          Text(title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(color: color, fontFamily: 'Poppins')),
-          // draw a line
-          Expanded(
-              child: Container(
-            height: 1,
-            color: color,
-            margin: const EdgeInsets.only(left: 16, right: 16),
-          )),
         ],
       ),
     );
@@ -234,6 +227,7 @@ class _TasksPageState extends State<TasksPage> {
       child: Card(
         child: ListTile(
           title: Text('${task.taskId}: ${task.operation}'),
+          subtitle: Text('Kreditů: '),
           trailing: _buildConfirmButton(context, task),
         ),
       ),
@@ -279,6 +273,7 @@ class _TasksPageState extends State<TasksPage> {
             if (value == true) {
               setState(() {
                 logic.setTaskToDone(task);
+                handleSpecialCases(task);
                 Fluttertoast.showToast(
                     msg: 'Výborně! Úkol byl dokončen.',
                     toastLength: Toast.LENGTH_SHORT,
@@ -384,4 +379,69 @@ class _TasksPageState extends State<TasksPage> {
       },
     );
   }
-}
+
+
+  /// Checkuje speciální případy, kdy je potřeba upravit další úkoly
+  /// Jedná se o případy tyto případy
+  /// - Když uživatel potvrzuje dokončení operace rezervace materiálu, doptat se ho, jestli je na tento úkolák dost materiálu na skladě) Ano / Ne).
+  /// -- pokud ne, je následující krok objednávka materiálu
+  /// -- pokud ano, krok objednávka materiálu se přeskakuje a jde to rovnou na úkol nastříhání.
+  /// - Když uživatel potvrzuje dokončení operace nastříhání, doptat se ho, jestli může dílna začít šicí práce Ano / ne.
+  /// -- pokud ne - aktivní úkol se stane pouze úkol výdejka
+  /// -- pokud ano - kromě výdejky se aktivní úkoly stanou ještě úkoly následující po úkolu výdejka.
+  void handleSpecialCases(Task task) {
+    // pokud je úkol rezervace materiálu
+    if (task.operation == 'rezervace materiálu') {
+      // zobrazit dialog jestli je na skladě dost materiálu
+      _showDialogIfEnoughMaterial(context).then((value) {
+        if (value == true) {
+          // pokud je na skladě dost materiálu, přeskočit objednávku materiálu a jít rovnou na úkol nastříhání
+          final objednavkaMaterialuTask = logic.getFollowingTask(task);
+          logic.setTaskToStarted(objednavkaMaterialuTask);
+          logic.setTaskToDone(objednavkaMaterialuTask);
+        }
+        // pokud na skladu není dost materiálu, úkol proběhne standardně
+      });
+
+      }
+    }
+
+  _showDialogIfEnoughMaterial(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          title: const Text(
+            'Dostatek materiálu?',
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'Je na skladě dostatek materiálu?',
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+              ),
+              onPressed: () {
+                Navigator.pop(context, false); // Cancel
+              },
+              child: const Text('Ne', style: TextStyle(color: Colors.white)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              onPressed: () {
+                Navigator.pop(context, true); // Proceed
+              },
+              child: const Text('Ano', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  }

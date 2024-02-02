@@ -6,7 +6,7 @@ class Task extends Equatable {
   final String operation;
   final num operationOrderNumber;
   final num pieces;
-  final List<dynamic>? nextId;
+  final List<dynamic> nextId;
 
   final String spreadsheetSource;
   final String taskId;

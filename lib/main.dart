@@ -1,3 +1,4 @@
+import 'package:e_telka/app_bindings.dart';
 import 'package:e_telka/core/presentation/theme.dart';
 import 'package:e_telka/tasks/presentation/tasks_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,15 +14,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseAuth.instance.setLanguageCode("cs");
-  // if (kDebugMode) {
-  //   try {
-  //     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  //     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
   runApp(const EtelkaApp());
 }
 
@@ -34,6 +26,7 @@ class EtelkaApp extends StatelessWidget {
     FirebaseAuth.instance.setLanguageCode("cs");
     final providers = [EmailAuthProvider()];
     return GetMaterialApp(
+        initialBinding: AppBindings(),
         theme: theme.toThemeData(),
         initialRoute:
             FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/tasks',
