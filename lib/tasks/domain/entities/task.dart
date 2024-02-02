@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Task extends Equatable {
   final String id;
+  final int credit_price_total_amount;
+  bool isActive;
+  bool isVisible;
   final String operation;
   final num operationOrderNumber;
   final num pieces;
@@ -17,6 +20,7 @@ class Task extends Equatable {
   DateTime? realizedEndDate;
 
   Task({
+    required this.credit_price_total_amount,
     required this.id,
     required this.operation,
     required this.operationOrderNumber,
@@ -28,20 +32,26 @@ class Task extends Equatable {
     required this.workerID,
     this.startedDate,
     this.realizedEndDate,
+    required this.isActive,
+    required this.isVisible,
   });
 
   @override
   List<Object?> get props => [
-        id,
-        operation,
-        operationOrderNumber,
-        pieces,
-        plannedEndDate,
-        spreadsheetSource,
-        taskId,
-        workerID,
-        startedDate,
-        realizedEndDate,
+    credit_price_total_amount,
+    id,
+    operation,
+    operationOrderNumber,
+    pieces,
+    nextId,
+    plannedEndDate,
+    spreadsheetSource,
+    taskId,
+    workerID,
+    startedDate,
+    realizedEndDate,
+    isActive,
+    isVisible,
       ];
 
   factory Task.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -59,6 +69,9 @@ class Task extends Equatable {
       startedDate: DateTime.tryParse(data['started_date'] ?? ""),
       plannedEndDate: DateTime.tryParse(data['planned_end_date'] ?? ''),
       realizedEndDate: DateTime.tryParse(data['realized_end_date'] ?? ''),
+      credit_price_total_amount: data['credit_price_total_amount'],
+      isActive: data['is_active'],
+      isVisible: data['is_visible'],
     );
   }
 
@@ -74,6 +87,9 @@ class Task extends Equatable {
       'worker': workerID,
       'started_date': startedDate.toString(),
       'realized_end_date': realizedEndDate.toString(),
+      'credit_price_total_amount': credit_price_total_amount,
+      'is_active': isActive,
+      'is_visible': isVisible,
     };
   }
 }
