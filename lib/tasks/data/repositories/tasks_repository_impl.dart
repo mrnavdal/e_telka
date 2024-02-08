@@ -18,34 +18,32 @@ class TasksRepositoryImpl extends TasksRepository {
   Future<List<Task>> getUsersActiveTasks() async {
     final userID = await coreRemoteDataSource.getCurrentUserID();
     allTasks = await tasksRemoteDataSource.getAllTasks();
-    // determine which tasks are active
+    // determine which tasks are not completed
     List<Task> incompleteTasks =
         allTasks.where((element) => element.realizedEndDate == null).toList();
     // determine which tasks are user's
     final usersTasks =
         incompleteTasks.where((element) => element.workerID == userID).toList();
-    // loop through incomplete tasks. If the id of the task is in the nextId of any other task, it is not to be shown
+    // show only those which are active
     List<Task> tasksShown = [];
-    for (Task usersTask in usersTasks) {
-      bool isNextIdInUsersTasks = false;
-      for (Task incompleteTask in incompleteTasks) {
-        if (incompleteTask.nextId!.contains(usersTask.id)) {
-          isNextIdInUsersTasks = true;
-          break;
-        }
-      }
-      if (!isNextIdInUsersTasks) {
-        tasksShown.add(usersTask);
-      }
-    }
+    tasksShown = usersTasks.where((element) => element.isActive == true).toList();
     tasksShown.sort((a, b) => a.taskId.compareTo(b.taskId));
     return tasksShown;
   }
 
   @override
-  Future<void> setTaskToDone(Task task) {
+  Future<void> finishTask(Task task) {
+    // sets task as finished and updates it in the database
+    // also sets the following task as active
     task.realizedEndDate = DateTime.now();
-    return tasksRemoteDataSource.updateTask(task);
+    task.isActive = false;
+    tasksRemoteDataSource.updateTask(task);
+    final followingTask = getFollowingTask(task);
+    if (followingTask != null) {
+      followingTask.isActive = true;
+      tasksRemoteDataSource.updateTask(followingTask);
+    }
+    return Future.value();
   }
 
   @override
@@ -56,16 +54,19 @@ class TasksRepositoryImpl extends TasksRepository {
 
   /// Možná implementace pro více tasků, ale zatím nechám takhle
   @override
-  Task getPreviousTask(Task task) {
+  Task? getPreviousTask(Task task) {
     print(task.id);
-    return allTasks.firstWhere((element) => element.nextId!.contains(task.id));
+    return allTasks.firstWhere((element) => element.nextId?.contains(task.id) ?? false);
   }
 
   /// Možná implementace pro více tasků, ale zatím nechám takhle
   @override
-  Task getFollowingTask(Task task) {
-    final nextId = task.nextId!.first;
-    final result = allTasks.firstWhere((element) => element.id == nextId);
+  Task? getFollowingTask(Task task) {
+    final nextId = task.nextId?.first;
+    if (nextId == null) {
+      return null;
+    }
+    final result = allTasks.firstWhere((element) => element.id == nextId!);
     return result;
   }
 }

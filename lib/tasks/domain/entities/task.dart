@@ -3,17 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Task extends Equatable {
   final String id;
-  final int credit_price_total_amount;
+  final num credit_price_total_amount;
   bool isActive;
   bool isVisible;
   final String operation;
   final num operationOrderNumber;
   final num pieces;
-  final List<dynamic> nextId;
+  final List<dynamic>? nextId;
 
   final String spreadsheetSource;
-  final String taskId;
-  final String workerID;
+  final num taskId;
+  final String? workerID;
 
   DateTime? plannedEndDate;
   DateTime? startedDate;

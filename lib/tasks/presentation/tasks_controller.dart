@@ -16,8 +16,8 @@ class TasksController extends GetxController {
   RxList<Task> tasks = <Task>[].obs;
   RxList<Task> allTasks = <Task>[].obs;
 
-  Task getFollowingTask(Task task) => tasksRepository.getFollowingTask(task);
-  Task getPreviouosTask(Task task) => tasksRepository.getPreviousTask(task);
+  Task? getFollowingTask(Task task) => tasksRepository.getFollowingTask(task);
+  Task? getPreviousTask(Task task) => tasksRepository.getPreviousTask(task);
   List<String> filteredOperations = <String>[];
   List<String> filteredStates = <String>['Zahájené úkoly', 'Nezahájené úkoly'];
   String selectedSortingFactor = 'Čísla úkolu';
@@ -127,9 +127,9 @@ class TasksController extends GetxController {
     update(); // Update the state so that the value is available to views
   }
 
-  Future<void> setTaskToDone(Task? task) async {
+  Future<void> finishTask(Task? task) async {
     if (task != null) {
-      await tasksRepository.setTaskToDone(task);
+      await tasksRepository.finishTask(task);
       refreshTasks();
     }
   }

@@ -227,7 +227,7 @@ class _TasksPageState extends State<TasksPage> {
       child: Card(
         child: ListTile(
           title: Text('${task.taskId}: ${task.operation}'),
-          subtitle: Text('Kreditů: '),
+          subtitle: Text('Kreditů: ${task.credit_price_total_amount}'),
           trailing: _buildConfirmButton(context, task),
         ),
       ),
@@ -272,7 +272,7 @@ class _TasksPageState extends State<TasksPage> {
           _confirmTaskDialog(context).then((value) {
             if (value == true) {
               setState(() {
-                logic.setTaskToDone(task);
+                logic.finishTask(task);
                 handleSpecialCases(task);
                 Fluttertoast.showToast(
                     msg: 'Výborně! Úkol byl dokončen.',
@@ -398,7 +398,7 @@ class _TasksPageState extends State<TasksPage> {
           // pokud je na skladě dost materiálu, přeskočit objednávku materiálu a jít rovnou na úkol nastříhání
           final objednavkaMaterialuTask = logic.getFollowingTask(task);
           logic.setTaskToStarted(objednavkaMaterialuTask);
-          logic.setTaskToDone(objednavkaMaterialuTask);
+          logic.finishTask(objednavkaMaterialuTask);
         }
         // pokud na skladu není dost materiálu, úkol proběhne standardně
       });

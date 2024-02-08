@@ -28,6 +28,8 @@ class TaskDetail extends StatelessWidget {
               Text('Datum začátku plnění: $formattedStartedDate'),
               Text('Zdroj: ${task.spreadsheetSource.toString()}'),
               Text('Počet kusů: ${task.pieces.toString()}'),
+              Text('Kreditů za úkol: ${task.credit_price_total_amount.toString()}'),
+              Text(': ${task.credit_price_total_amount.toString()}'),
               ElevatedButton(
                 onPressed: Navigator.of(context).pop,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
