@@ -1,15 +1,11 @@
-import 'package:e_telka/tasks/domain/entities/task.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
-import 'package:e_telka/tasks/presentation/widgets/sorting_widget.dart';
-import 'package:e_telka/tasks/presentation/widgets/task_detail.dart';
+import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
+import 'package:e_telka/tasks/presentation/widgets/tasks_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import 'tasks_controller.dart';
-import 'widgets/completeness_filter.dart';
-import 'widgets/operations_filter.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({Key? key}) : super(key: key);
@@ -19,7 +15,7 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final logic = Get.put(TasksController());
+  final logic = Get.find<TasksController>();
 
   final state = Get.find<TasksController>().state;
 
@@ -56,8 +52,7 @@ class _TasksPageState extends State<TasksPage> {
         ),
         actions: [
           IconButton(
-              // onPressed: () {},
-              onPressed: () => _showFilterDialog(context).then((value) {
+              onPressed: () => showFilterDialog(context).then((value) {
                     if (value == true) {
                       setState(() {
                         logic.areTasksFiltered = true;
@@ -85,9 +80,29 @@ class _TasksPageState extends State<TasksPage> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          buildDelayedTasksListView(context),
-                          buildCurrentTasksListView(context),
-                          buildUpcomingTasksListView(context)
+                          TasksListView(
+                              params: TasksListViewParams(
+                                  title: 'Zpožděné úkoly',
+                                  tasksToDisplay: logic.delayedTasks,
+                                  backgroundColor:
+                                      colorScheme.secondaryContainer,
+                                  iconData: Icons.error_outline,
+                                  textColor: colorScheme.onSecondaryContainer)),
+                          TasksListView(
+                              params: TasksListViewParams(
+                                  title: 'Úkoly pro tento týden',
+                                  tasksToDisplay: logic.currentWeekTasks,
+                                  backgroundColor: colorScheme.primaryContainer,
+                                  iconData: Icons.calendar_today,
+                                  textColor: colorScheme.onPrimaryContainer)),
+                          TasksListView(
+                              params: TasksListViewParams(
+                                  title: 'Nadcházející úkoly',
+                                  tasksToDisplay: logic.upcomingTasks,
+                                  backgroundColor:
+                                      colorScheme.tertiaryContainer,
+                                  iconData: Icons.calendar_month,
+                                  textColor: colorScheme.onTertiaryContainer)),
                         ],
                       ),
                     )),
@@ -98,397 +113,4 @@ class _TasksPageState extends State<TasksPage> {
       ),
     );
   }
-
-  Widget buildDelayedTasksListView(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final delayedTasks = logic.delayedTasks;
-    if (delayedTasks.isEmpty) {
-      return const SizedBox.shrink();
-    } else {
-      return Column(
-        children: [
-          tasksSublistHeader(
-              context,
-              'Zpožděné úkoly',
-              colorScheme.onSecondaryContainer,
-              Icons.error_outline,
-              colorScheme.secondaryContainer),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: delayedTasks.length,
-            itemBuilder: (context, index) {
-              final task = delayedTasks[index];
-              return taskCard(context, task);
-            },
-          ),
-        ],
-      );
-    }
-  }
-
-  Widget buildCurrentTasksListView(BuildContext context) {
-    final currentTasks = logic.currentWeekTasks;
-    final colorScheme = Theme.of(context).colorScheme;
-    if (currentTasks.isEmpty) {
-      return const SizedBox.shrink();
-    } else {
-      return Column(
-        children: [
-          tasksSublistHeader(
-              context,
-              'Tento týden',
-              colorScheme.onPrimaryContainer,
-              Icons.check_circle_outline,
-              colorScheme.primaryContainer),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: currentTasks.length,
-            itemBuilder: (context, index) {
-              final task = currentTasks[index];
-              return taskCard(context, task);
-            },
-          ),
-        ],
-      );
-    }
-  }
-
-  Widget buildUpcomingTasksListView(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final upcomingTasks = logic.upcomingTasks;
-    if (upcomingTasks.isEmpty) {
-      return const SizedBox.shrink();
-    } else {
-      return Column(
-        children: [
-          tasksSublistHeader(
-              context,
-              'Nadcházející úkoly',
-              colorScheme.onTertiaryContainer,
-              Icons.calendar_month,
-              colorScheme.tertiaryContainer),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: upcomingTasks.length,
-            itemBuilder: (context, index) {
-              final task = upcomingTasks[index];
-              return taskCard(context, task);
-            },
-          ),
-        ],
-      );
-    }
-  }
-
-  Widget tasksSublistHeader(BuildContext context, String title, Color color,
-      IconData iconData, Color backgroundColor) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-              child: Center(
-            child: Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall!
-                    .copyWith(color: color, fontFamily: 'Poppins')),
-          )),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-            child: Icon(
-              iconData,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget taskCard(BuildContext context, Task task) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return TaskDetail(task: task);
-            });
-      },
-      child: Card(
-        child: ListTile(
-          title: Text('${task.taskId}: ${task.operation}'),
-          subtitle: Text('Kreditů: ${task.credit_price_total_amount}'),
-          trailing: _buildConfirmButton(context, task),
-        ),
-      ),
-    );
-  }
-
-  ElevatedButton _buildConfirmButton(BuildContext context, Task task) {
-    if (task.startedDate == null) {
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        onPressed: () {
-          _confirmTaskDialog(context).then((value) {
-            if (value == true) {
-              setState(() {
-                logic.setTaskToStarted(task);
-                Fluttertoast.showToast(
-                    msg: 'Úkol byl zahájen.',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.yellow,
-                    textColor: Colors.black,
-                    fontSize: 16.0);
-              });
-            }
-          });
-        },
-        child: Text(
-          'Začít',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
-        ),
-      );
-    } else if (task.realizedEndDate == null) {
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-        ),
-        onPressed: () {
-          _confirmTaskDialog(context).then((value) {
-            if (value == true) {
-              setState(() {
-                logic.finishTask(task);
-                handleSpecialCases(task);
-                Fluttertoast.showToast(
-                    msg: 'Výborně! Úkol byl dokončen.',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              });
-            }
-          });
-        },
-        child: Text(
-          'Dokončit',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onTertiaryContainer),
-        ),
-      );
-    }
-    return ElevatedButton(
-      onPressed: () {},
-      child: const Text('Úkol dokončen'),
-    );
-  }
-
-  Future<bool?> _confirmTaskDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actionsAlignment: MainAxisAlignment.spaceAround,
-          title: const Text(
-            'Potvrďte akci',
-            textAlign: TextAlign.center,
-          ),
-          content: const Text(
-            'Jste si jisti, že chcete potvrdit akci? Toto nejde vzít zpět.',
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-              ),
-              onPressed: () {
-                Navigator.pop(context, false); // Cancel
-              },
-              child: const Text('Ne', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () {
-                Navigator.pop(context, true); // Proceed
-              },
-              child: const Text('Ano', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  _showFilterDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actionsAlignment: MainAxisAlignment.spaceAround,
-          title: const Text(
-            'Filtrovat úkoly',
-            textAlign: TextAlign.center,
-          ),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            OperationsFilters(logic: logic),
-            CompletenessFilter(logic: logic),
-            SortingWidget(logic: logic),
-          ]),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-              ),
-              onPressed: () {
-                Navigator.pop(context, false); // Cancel
-              },
-              child: const Text('Zrušit filtry',
-                  style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () {
-                Navigator.pop(context, true); // Proceed
-              },
-              child: const Text('Filtrovat',
-                  style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
-  /// Checkuje speciální případy, kdy je potřeba upravit další úkoly
-  /// Jedná se o případy tyto případy
-  /// - Když uživatel potvrzuje dokončení operace rezervace materiálu, doptat se ho, jestli je na tento úkolák dost materiálu na skladě) Ano / Ne).
-  /// -- pokud ne, je následující krok objednávka materiálu
-  /// -- pokud ano, krok objednávka materiálu se přeskakuje a jde to rovnou na úkol nastříhání.
-  /// - Když uživatel potvrzuje dokončení operace nastříhání, doptat se ho, jestli může dílna začít šicí práce Ano / ne.
-  /// -- pokud ne - aktivní úkol se stane pouze úkol výdejka
-  /// -- pokud ano - kromě výdejky se aktivní úkoly stanou ještě úkoly následující po úkolu výdejka.
-  void handleSpecialCases(Task task) {
-    // pokud je úkol rezervace materiálu
-    if (task.operation == 'rezervace materiálu') {
-      // zobrazit dialog jestli je na skladě dost materiálu
-      _showDialogIfEnoughMaterial(context).then((value) {
-        if (value == true) {
-          // pokud je na skladě dost materiálu, přeskočit objednávku materiálu a jít rovnou na úkol nastříhání
-          final objednavkaMaterialuTask = logic.getFollowingTask(task);
-          logic.setTaskToStarted(objednavkaMaterialuTask);
-          logic.finishTask(objednavkaMaterialuTask);
-        }
-        // pokud na skladu není dost materiálu, úkol proběhne standardně
-      });
-    }
-    // pokud je úkol nastříhání
-    if (task.operation == 'nastříhání') {
-      // zobrazit dialog jestli může dílna začít šicí práce
-      _showDialogIfWorkshopCanStartSewing(context).then((value) {
-        if (value == true) {
-          // pokud může dílna začít šicí práce, aktivní úkoly se stanou i úkoly následující po úkolu výdejka
-          logic.makeSewingTasksActive(task);
-        }
-        // pokud dílna nemůže začít šicí práce, aktivní úkol se stane pouze úkol výdejka, což je standardní chování
-      });
-    }
-  }
-
-  _showDialogIfEnoughMaterial(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actionsAlignment: MainAxisAlignment.spaceAround,
-          title: const Text(
-            'Dostatek materiálu?',
-            textAlign: TextAlign.center,
-          ),
-          content: const Text(
-            'Je na skladě dostatek materiálu?',
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-              ),
-              onPressed: () {
-                Navigator.pop(context, false); // Cancel
-              },
-              child: const Text('Ne', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () {
-                Navigator.pop(context, true); // Proceed
-              },
-              child: const Text('Ano', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  _showDialogIfWorkshopCanStartSewing(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actionsAlignment: MainAxisAlignment.spaceAround,
-          title: const Text(
-            'Šicí práce',
-            textAlign: TextAlign.center,
-          ),
-          content: const Text(
-            'Může dílna začít šicí práce?',
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-              ),
-              onPressed: () {
-                Navigator.pop(context, false); // Cancel
-              },
-              child: const Text('Ne', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () {
-                Navigator.pop(context, true); // Proceed
-              },
-              child: const Text('Ano', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-  }
+}

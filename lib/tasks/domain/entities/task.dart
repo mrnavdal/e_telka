@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Task extends Equatable {
   final String id;
   final num credit_price_total_amount;

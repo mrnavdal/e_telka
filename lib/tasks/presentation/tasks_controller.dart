@@ -139,7 +139,7 @@ class TasksController extends GetxController {
     }
   }
 
-  void makeSewingTasksActive(Task task) {
+  void activateSewingAndPriceTasks(Task task) {
     final taskListID = task.taskId;
     // get all tasks with the same taskListID
     final ukolakTasks =

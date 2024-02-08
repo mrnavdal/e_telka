@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../tasks_controller.dart';
+import '../../tasks_controller.dart';
 
 class OperationsFilters extends StatefulWidget {
   const OperationsFilters({super.key, required this.logic});
