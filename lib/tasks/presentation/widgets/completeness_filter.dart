@@ -17,7 +17,7 @@ class _CompletenessFilterState extends State<CompletenessFilter> {
     final textTheme = theme.textTheme;
     return Column(
       children: [
-        Divider(),
+        const Divider(),
         Text('Stav úkolů:', style: textTheme.labelMedium),
         CheckboxListTile(
           enabled: true,
@@ -46,7 +46,7 @@ class _CompletenessFilterState extends State<CompletenessFilter> {
             });
           },
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }

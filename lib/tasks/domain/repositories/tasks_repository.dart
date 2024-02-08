@@ -1,11 +1,14 @@
 import 'package:e_telka/tasks/domain/entities/task.dart';
 
 abstract class TasksRepository {
+  List<Task> get allTasks;
   Future<List<Task>> getUsersActiveTasks();
   Future<void> finishTask(Task task);
   Future<void> setTaskToStarted(Task task);
   Task? getPreviousTask(Task task);
   Task? getFollowingTask(Task task);
+
+  void updateTask(Task task);
 
 
   // Future<Either<Failure, Task>> getTask(String id);

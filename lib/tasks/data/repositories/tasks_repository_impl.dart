@@ -1,6 +1,4 @@
 import 'package:e_telka/core/data/data_sources/core_data_source.dart';
-import 'package:e_telka/core/data/data_sources/core_data_source_impl.dart';
-import 'package:e_telka/tasks/data/datasources/tasks_remote_data_source_impl.dart';
 import 'package:e_telka/tasks/domain/entities/task.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
 import 'package:get/get.dart';
@@ -12,12 +10,15 @@ class TasksRepositoryImpl extends TasksRepository {
   final CoreRemoteDataSource coreRemoteDataSource = Get.find();
   TasksRepositoryImpl();
 
-  List<Task> allTasks = [];
+  List<Task> _allTasks = [];
+
+  @override
+  List<Task> get allTasks => _allTasks;
 
   @override
   Future<List<Task>> getUsersActiveTasks() async {
     final userID = await coreRemoteDataSource.getCurrentUserID();
-    allTasks = await tasksRemoteDataSource.getAllTasks();
+    _allTasks = await tasksRemoteDataSource.getAllTasks();
     // determine which tasks are not completed
     List<Task> incompleteTasks =
         allTasks.where((element) => element.realizedEndDate == null).toList();
@@ -68,5 +69,10 @@ class TasksRepositoryImpl extends TasksRepository {
     }
     final result = allTasks.firstWhere((element) => element.id == nextId!);
     return result;
+  }
+
+  @override
+  void updateTask(Task task) {
+    tasksRemoteDataSource.updateTask(task);
   }
 }

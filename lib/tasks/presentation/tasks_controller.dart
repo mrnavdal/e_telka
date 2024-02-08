@@ -1,9 +1,7 @@
 import 'package:e_telka/core/util/date_util.dart';
 import 'package:e_telka/tasks/domain/entities/task.dart';
-import 'package:e_telka/tasks/data/repositories/tasks_repository_impl.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class TasksController extends GetxController {
@@ -139,5 +137,24 @@ class TasksController extends GetxController {
       await tasksRepository.setTaskToStarted(task);
       refreshTasks();
     }
+  }
+
+  void makeSewingTasksActive(Task task) {
+    final taskListID = task.taskId;
+    // get all tasks with the same taskListID
+    final ukolakTasks =
+        tasksRepository.allTasks.where((element) => element.taskId == taskListID).toList();
+    // make sewing tasks that come first active (901 is the order number of the first sewing task)
+    for (var task in ukolakTasks) {
+      if (['štep', 'obnitka', 'pevný', 'flatlock'].contains(task.operation) && task.operationOrderNumber == 901) {
+        task.isActive = true;
+        tasksRepository.updateTask(task);
+      }
+      if (task.operation == 'cena + rozdělovník') {
+        task.isActive = true;
+        tasksRepository.updateTask(task);
+      }
+    }
+    refreshTasks();
   }
 }

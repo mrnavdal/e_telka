@@ -36,6 +36,8 @@ class Task extends Equatable {
     required this.isVisible,
   });
 
+
+
   @override
   List<Object?> get props => [
     credit_price_total_amount,

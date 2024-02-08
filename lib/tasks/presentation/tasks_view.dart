@@ -6,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:intl/intl.dart';
 
 import 'tasks_controller.dart';
 import 'widgets/completeness_filter.dart';
@@ -402,9 +400,19 @@ class _TasksPageState extends State<TasksPage> {
         }
         // pokud na skladu není dost materiálu, úkol proběhne standardně
       });
-
-      }
     }
+    // pokud je úkol nastříhání
+    if (task.operation == 'nastříhání') {
+      // zobrazit dialog jestli může dílna začít šicí práce
+      _showDialogIfWorkshopCanStartSewing(context).then((value) {
+        if (value == true) {
+          // pokud může dílna začít šicí práce, aktivní úkoly se stanou i úkoly následující po úkolu výdejka
+          logic.makeSewingTasksActive(task);
+        }
+        // pokud dílna nemůže začít šicí práce, aktivní úkol se stane pouze úkol výdejka, což je standardní chování
+      });
+    }
+  }
 
   _showDialogIfEnoughMaterial(BuildContext context) {
     return showDialog<bool>(
@@ -418,6 +426,45 @@ class _TasksPageState extends State<TasksPage> {
           ),
           content: const Text(
             'Je na skladě dostatek materiálu?',
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+              ),
+              onPressed: () {
+                Navigator.pop(context, false); // Cancel
+              },
+              child: const Text('Ne', style: TextStyle(color: Colors.white)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              onPressed: () {
+                Navigator.pop(context, true); // Proceed
+              },
+              child: const Text('Ano', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _showDialogIfWorkshopCanStartSewing(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          title: const Text(
+            'Šicí práce',
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'Může dílna začít šicí práce?',
             textAlign: TextAlign.center,
           ),
           actions: [

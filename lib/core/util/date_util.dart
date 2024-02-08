@@ -16,7 +16,7 @@ class DateUtil {
   bool isDateInThisWeek(DateTime date) {
     final now = DateTime.now();
     final firstDayOfThisWeek = now.subtract(Duration(days: now.weekday - 1));
-    final lastDayOfThisWeek = firstDayOfThisWeek.add(Duration(days: 6));
+    final lastDayOfThisWeek = firstDayOfThisWeek.add(const Duration(days: 6));
     return date.isAfter(firstDayOfThisWeek) && date.isBefore(lastDayOfThisWeek);
   }
 

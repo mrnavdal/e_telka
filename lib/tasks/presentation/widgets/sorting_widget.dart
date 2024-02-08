@@ -9,6 +9,7 @@ final TasksController logic;
 }
 
 class _SortingWidgetState extends State<SortingWidget> {
+  @override
   Widget build(BuildContext context) {
     final logic = widget.logic;
     String sortOrder = logic.ascendingOrder ? 'Vzestupně' : 'Sestupně';
