@@ -1,3 +1,4 @@
+import 'package:e_telka/tasks/presentation/pages/task_detail_page.dart';
 import 'package:e_telka/tasks/presentation/tasks_controller.dart';
 import 'package:e_telka/tasks/presentation/widgets/task_detail.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
@@ -33,16 +34,12 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return TaskDetail(task: widget.task);
-            });
+        Get.to(() => TaskDetailPage(widget.task), transition: Transition.rightToLeft);
       },
       child: Card(
         child: ListTile(
           title: Text('${widget.task.taskId}: ${widget.task.operation}'),
-          subtitle: Text('Kreditů: ${widget.task.credit_price_total_amount}'),
+          subtitle: Text('Kreditů: ${widget.task.creditPriceTotalAmount}'),
           trailing: _buildTaskActionButton(context, widget.task),
         ),
       ),
@@ -130,7 +127,7 @@ class _TaskCardState extends State<TaskCard> {
   void handleSpecialCases(Task task) {
     if (task.operation == 'rezervace materiálu') {
       showConfirmationDialog(
-          context, 'Dostatek materiálu', 'Je na skladě dostatek materiálu?')
+              context, 'Dostatek materiálu', 'Je na skladě dostatek materiálu?')
           .then((value) {
         if (value == true) {
           final objednavkaMaterialuTask = logic.getFollowingTask(task);

@@ -1,8 +1,11 @@
+import 'package:e_telka/core/util/date_util.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Task extends Equatable {
   final String id;
-  final num credit_price_total_amount;
+  final num creditPriceTotalAmount;
+  final num creditsUnit;
   bool isActive;
   bool isVisible;
   final String operation;
@@ -18,8 +21,15 @@ class Task extends Equatable {
   DateTime? startedDate;
   DateTime? realizedEndDate;
 
+  final String productId;
+  final String productMaterialCategory;
+  final String productMaterialGroupCategory;
+  final String productName;
+
+
   Task({
-    required this.credit_price_total_amount,
+    required this.creditPriceTotalAmount,
+    required this.creditsUnit,
     required this.id,
     required this.operation,
     required this.operationOrderNumber,
@@ -33,26 +43,38 @@ class Task extends Equatable {
     this.realizedEndDate,
     required this.isActive,
     required this.isVisible,
+    required this.productId,
+    required this.productMaterialCategory,
+    required this.productMaterialGroupCategory,
+    required this.productName,
   });
 
+  // format planned end date to a human readable format using the DateUtil class
 
+  String get formattedPlannedEndDate => DateUtil.getFormattedDate(plannedEndDate!);
+  String get formattedPieces => pieces.toStringAsFixed(0);
+  String get formattedCreditsTotal =>
+      creditPriceTotalAmount.toStringAsFixed(0);
+  String get formattedCreditsUnit =>
+      creditsUnit.toStringAsFixed(1);
 
   @override
   List<Object?> get props => [
-    credit_price_total_amount,
-    id,
-    operation,
-    operationOrderNumber,
-    pieces,
-    nextId,
-    plannedEndDate,
-    spreadsheetSource,
-    taskId,
-    workerID,
-    startedDate,
-    realizedEndDate,
-    isActive,
-    isVisible,
+        creditPriceTotalAmount,
+        creditsUnit,
+        id,
+        operation,
+        operationOrderNumber,
+        pieces,
+        nextId,
+        plannedEndDate,
+        spreadsheetSource,
+        taskId,
+        workerID,
+        startedDate,
+        realizedEndDate,
+        isActive,
+        isVisible,
       ];
 
   factory Task.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -70,9 +92,14 @@ class Task extends Equatable {
       startedDate: DateTime.tryParse(data['started_date'] ?? ""),
       plannedEndDate: DateTime.tryParse(data['planned_end_date'] ?? ''),
       realizedEndDate: DateTime.tryParse(data['realized_end_date'] ?? ''),
-      credit_price_total_amount: data['credit_price_total_amount'],
+      creditPriceTotalAmount: data['credit_price_total_amount'],
+      creditsUnit: data['credits_unit'] ?? 0.0,
       isActive: data['is_active'],
       isVisible: data['is_visible'],
+      productId: data['PRODUCT__id'] ?? "",
+      productMaterialCategory: data['PRODUCT__material_category'] ?? "",
+      productMaterialGroupCategory: data['PRODUCT__material_group_category'] ?? "",
+      productName: data['PRODUCT__name'] ?? "",
     );
   }
 
@@ -88,9 +115,14 @@ class Task extends Equatable {
       'worker': workerID,
       'started_date': startedDate.toString(),
       'realized_end_date': realizedEndDate.toString(),
-      'credit_price_total_amount': credit_price_total_amount,
+      'credit_price_total_amount': creditPriceTotalAmount,
+      'credits_unit': creditsUnit,
       'is_active': isActive,
       'is_visible': isVisible,
+      'PRODUCT__id': productId,
+      'PRODUCT__material_category': productMaterialCategory,
+      'PRODUCT__material_group_category': productMaterialGroupCategory,
+      'PRODUCT__name': productName,
     };
   }
 }

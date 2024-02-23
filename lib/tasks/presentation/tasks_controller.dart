@@ -13,7 +13,6 @@ class TasksController extends GetxController {
   var index = 0.obs;
   RxList<Task> tasks = <Task>[].obs;
   RxList<Task> allTasks = <Task>[].obs;
-
   Task? getFollowingTask(Task task) => tasksRepository.getFollowingTask(task);
   Task? getPreviousTask(Task task) => tasksRepository.getPreviousTask(task);
   List<String> filteredOperations = <String>[];
