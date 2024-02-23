@@ -1,5 +1,6 @@
 import 'package:e_telka/core/util/date_util.dart';
 import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/vecicky_worker.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ class TasksController extends GetxController {
   final TasksRepository tasksRepository = Get.find();
 
   final DateUtil dateUtil = Get.find();
+  List<VecickyWorker> workers = <VecickyWorker>[];
 
   Rx<TasksState> state = TasksState('TasksState').obs;
   var index = 0.obs;
@@ -37,6 +39,7 @@ class TasksController extends GetxController {
       .toList();
 
   Future<void> initializeTasks() async {
+    workers = await tasksRepository.getWorkers();
     activeTasks.value = await tasksRepository.getAllActiveTasks();
     activeTasks.sort((a, b) => a.plannedEndDate!.compareTo(b.plannedEndDate!));
     usersTasks.value = await tasksRepository.getUsersActiveTasks();

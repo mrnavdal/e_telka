@@ -31,8 +31,7 @@ class TasksRepositoryImpl extends TasksRepository {
       incompleteTasks.where((element) => element.workerID == userID).toList();
     }
     // show only those which are active
-    List<Task> tasksShown = [];
-    tasksShown = usersTasks.where((element) => element.isActive == true).toList();
+    List<Task> tasksShown = usersTasks.where((element) => element.isActive == true && element.workerID != null).toList();
     tasksShown.sort((a, b) => a.taskId.compareTo(b.taskId));
     return tasksShown;
   }
@@ -84,7 +83,7 @@ class TasksRepositoryImpl extends TasksRepository {
   @override
   Future<List<Task>> getAllActiveTasks() {
     return Future.value(
-        allTasks.where((element) => element.isActive == true).toList());
+        allTasks.where((element) => element.isActive == true && element.workerID != null).toList());
   }
 
   Future<List<VecickyWorker>> getWorkers() {

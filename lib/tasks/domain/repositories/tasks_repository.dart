@@ -1,4 +1,5 @@
 import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/vecicky_worker.dart';
 
 abstract class TasksRepository {
   List<Task> get allTasks;
@@ -10,6 +11,8 @@ abstract class TasksRepository {
   Task? getFollowingTask(Task task);
 
   void updateTask(Task task);
+
+  Future<List<VecickyWorker>> getWorkers();
 
 
   // Future<Either<Failure, Task>> getTask(String id);

@@ -37,12 +37,18 @@ class _AllTasksState extends State<AllTasks> {
   }
 
   Widget activeTaskTile(Task task) {
+    final workerName = logic.workers.firstWhere((element) => element.id == task.workerID).name;
+    bool isLate = task.plannedEndDate != null && DateUtil().isDateBeforeThisWeek(task.plannedEndDate!);
     return Column(
       children: [
         ListTile(
+          leading: Icon(
+            isLate ? Icons.error_outline : Icons.calendar_today,
+            color: isLate ? Colors.red : Colors.green,
+          ),
           title: Text('${task.taskId}: ${task.operation}'),
-          subtitle: Text('Odpovědná osoba: ${task.workerID}'),
-          trailing: Text('Plánované dokončení \n ${DateUtil.getFormattedDate(task.plannedEndDate!)}', textAlign: TextAlign.end,),
+          subtitle: Text('Odpovědná osoba: ${workerName}'),
+          trailing: Text('Plánované dokončení \n ${DateUtil.getFormattedDate(task.plannedEndDate!)}', textAlign: TextAlign.end, style: TextStyle(color: isLate ? Colors.red : Colors.black)),
         ),
         const Divider(),
       ],
