@@ -1,6 +1,6 @@
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
-import 'package:e_telka/tasks/presentation/widgets/tasks_list.dart';
+import 'package:e_telka/tasks/presentation/widgets/tasks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

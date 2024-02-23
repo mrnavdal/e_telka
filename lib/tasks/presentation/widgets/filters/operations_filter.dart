@@ -16,7 +16,7 @@ class _OperationsFiltersState extends State<OperationsFilters> {
     final logic = widget.logic;
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final operations = logic.allTasks.value.map((e) => e.operation).toSet();
+    final operations = logic.usersTasks.value.map((e) => e.operation).toSet();
     return Column(
       children: [
         Text('Operace:', style: textTheme.labelMedium),

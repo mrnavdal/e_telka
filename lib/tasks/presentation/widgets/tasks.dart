@@ -30,7 +30,7 @@ class TasksListView extends StatefulWidget {
 
 class _TasksListViewState extends State<TasksListView> {
   final TasksController logic = Get.find<TasksController>();
-  final List<Task> tasks = Get.find<TasksController>().allTasks;
+  final List<Task> tasks = Get.find<TasksController>().usersTasks;
 
   @override
   Widget build(BuildContext context) {

@@ -75,4 +75,10 @@ class TasksRepositoryImpl extends TasksRepository {
   void updateTask(Task task) {
     tasksRemoteDataSource.updateTask(task);
   }
+
+  @override
+  Future<List<Task>> getAllActiveTasks() {
+    return Future.value(
+        allTasks.where((element) => element.isActive == true).toList());
+  }
 }

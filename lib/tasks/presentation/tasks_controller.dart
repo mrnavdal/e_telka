@@ -12,7 +12,8 @@ class TasksController extends GetxController {
   Rx<TasksState> state = TasksState('TasksState').obs;
   var index = 0.obs;
   RxList<Task> tasks = <Task>[].obs;
-  RxList<Task> allTasks = <Task>[].obs;
+  RxList<Task> usersTasks = <Task>[].obs;
+  RxList<Task> activeTasks = <Task>[].obs;
   Task? getFollowingTask(Task task) => tasksRepository.getFollowingTask(task);
   Task? getPreviousTask(Task task) => tasksRepository.getPreviousTask(task);
   List<String> filteredOperations = <String>[];
@@ -36,25 +37,27 @@ class TasksController extends GetxController {
       .toList();
 
   Future<void> initializeTasks() async {
-    allTasks.value = await tasksRepository.getUsersActiveTasks();
+    activeTasks.value = await tasksRepository.getAllActiveTasks();
+    activeTasks.sort((a, b) => a.plannedEndDate!.compareTo(b.plannedEndDate!));
+    usersTasks.value = await tasksRepository.getUsersActiveTasks();
     filteredOperations =
-        allTasks.value.map((e) => e.operation).toSet().toList();
+        usersTasks.value.map((e) => e.operation).toSet().toList();
     filterTasks();
   }
 
   Future<void> refreshTasks() async {
-    allTasks.value = await tasksRepository.getUsersActiveTasks();
-    tasks = allTasks;
+    usersTasks.value = await tasksRepository.getUsersActiveTasks();
+    tasks = usersTasks;
     if (areTasksFiltered) {
       filterTasks();
     }
     update();
   }
 
-  disableFilters() => tasks = allTasks;
+  disableFilters() => tasks = usersTasks;
 
   void filterTasks() async {
-    tasks = allTasks;
+    tasks = usersTasks;
     filterOperations();
     filterStates();
     sortTasks();

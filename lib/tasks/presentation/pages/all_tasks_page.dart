@@ -1,5 +1,6 @@
 import 'package:e_telka/tasks/presentation/tasks_controller.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
+import 'package:e_telka/tasks/presentation/widgets/all_tasks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -85,7 +86,7 @@ class _AllTasksPageState extends State<AllTasksPage> {
         ],
       ),
       body: const Center(
-        child: Text('Všechny úkoly'),
+        child: SingleChildScrollView(child: AllTasks())
       ),
     );
   }
