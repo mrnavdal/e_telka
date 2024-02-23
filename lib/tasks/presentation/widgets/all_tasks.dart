@@ -28,7 +28,7 @@ class _AllTasksState extends State<AllTasks> {
             itemCount: activeTasks.length,
             itemBuilder: (context, index) {
               final task = activeTasks[index];
-              return activeTaskCard(task);
+              return activeTaskTile(task);
             },
           ),
         ],
@@ -36,13 +36,16 @@ class _AllTasksState extends State<AllTasks> {
     }
   }
 
-  Widget activeTaskCard(Task task) {
-    return Card(
-      child: ListTile(
-        title: Text('${task.taskId}: ${task.operation}'),
-        subtitle: Text('Odpovědná osoba: ${task.workerID}'),
-        trailing: Text('Plánované dokončení \n ${DateUtil.getFormattedDate(task.plannedEndDate!)}', textAlign: TextAlign.end,),
-      ),
+  Widget activeTaskTile(Task task) {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('${task.taskId}: ${task.operation}'),
+          subtitle: Text('Odpovědná osoba: ${task.workerID}'),
+          trailing: Text('Plánované dokončení \n ${DateUtil.getFormattedDate(task.plannedEndDate!)}', textAlign: TextAlign.end,),
+        ),
+        const Divider(),
+      ],
     );
   }
 }

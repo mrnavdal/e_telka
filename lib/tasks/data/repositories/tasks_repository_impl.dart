@@ -2,6 +2,7 @@ import 'package:e_telka/core/data/data_sources/core_data_source.dart';
 import 'package:e_telka/tasks/domain/entities/task.dart';
 import 'package:e_telka/tasks/domain/entities/vecicky_worker.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 import '../datasources/tasks_remote_data_source.dart';
@@ -23,9 +24,12 @@ class TasksRepositoryImpl extends TasksRepository {
     // determine which tasks are not completed
     List<Task> incompleteTasks =
         allTasks.where((element) => element.realizedEndDate == null).toList();
-    // determine which tasks are user's
-    final usersTasks =
-        incompleteTasks.where((element) => element.workerID == userID).toList();
+    List<Task> usersTasks = incompleteTasks;
+    // determine which tasks are user's. If the user is a super user show all
+    if(FirebaseAuth.instance.currentUser?.email != 'super@vecicky.cz'){
+      usersTasks =
+      incompleteTasks.where((element) => element.workerID == userID).toList();
+    }
     // show only those which are active
     List<Task> tasksShown = [];
     tasksShown = usersTasks.where((element) => element.isActive == true).toList();

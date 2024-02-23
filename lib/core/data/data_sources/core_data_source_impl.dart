@@ -16,7 +16,11 @@ class CoreRemoteDataSourceImpl implements CoreRemoteDataSource {
 
     final firestoreWorkersList =
         firestoreWorkers.docs.map((e) => e.data()).toList();
-    var currentUserID = firestoreWorkersList[0]['id'];
-    return currentUserID;
+    try {
+      var currentUserID = firestoreWorkersList[0]['id'];
+      return currentUserID;
+    } catch (e) {
+      return 'error';
+    }
   }
 }
