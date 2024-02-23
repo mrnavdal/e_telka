@@ -39,17 +39,50 @@ class _TasksPageState extends State<TasksPage> {
     final filterIcon = logic.areTasksFiltered
         ? const Icon(Icons.filter_alt)
         : const Icon(Icons.filter_alt_outlined);
+    bool isCurrentUserSuper =
+        FirebaseAuth.instance.currentUser?.email == 'vyroba@vecicky.cz';
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+              ),
+              // TODO: Add user profile information
+              child: Text(FirebaseAuth.instance.currentUser?.displayName ?? ""),
+            ),
+            ListTile(
+              leading: const Icon(Icons.task),
+              title: const Text('Moje úkoly'),
+              onTap: () {
+                Get.back();
+              },
+            ),
+            isCurrentUserSuper
+                ? ListTile(
+                    leading: const Icon(Icons.list),
+                    title: const Text('Všechny úkoly'),
+                    onTap: () {
+                      Get.toNamed('/all-tasks');
+                    },
+                  )
+                : Container(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Odhlásit se'),
+              onTap: () {
+                FirebaseAuth.instance.signOut();
+                Get.offAllNamed('/sign-in');
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Center(child: Text('Moje úkoly')),
-        leading: IconButton(
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-            Get.offAllNamed('/sign-in');
-          },
-          icon: const Icon(Icons.logout),
-        ),
         actions: [
           IconButton(
               onPressed: () => showFilterDialog(context).then((value) {
