@@ -7,7 +7,6 @@ class Task extends Equatable {
   final num creditPriceTotalAmount;
   final num creditsUnit;
   bool isActive;
-  bool isVisible;
   final String operation;
   final num operationOrderNumber;
   final num pieces;
@@ -42,7 +41,6 @@ class Task extends Equatable {
     this.startedDate,
     this.realizedEndDate,
     required this.isActive,
-    required this.isVisible,
     required this.productId,
     required this.productMaterialCategory,
     required this.productMaterialGroupCategory,
@@ -74,7 +72,7 @@ class Task extends Equatable {
         startedDate,
         realizedEndDate,
         isActive,
-        isVisible,
+
       ];
 
   factory Task.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -95,7 +93,6 @@ class Task extends Equatable {
       creditPriceTotalAmount: data['credit_price_total_amount'],
       creditsUnit: data['credits_unit'] ?? 0.0,
       isActive: data['is_active'],
-      isVisible: data['is_visible'],
       productId: data['PRODUCT__id'] ?? "",
       productMaterialCategory: data['PRODUCT__material_category'] ?? "",
       productMaterialGroupCategory: data['PRODUCT__material_group_category'] ?? "",
@@ -118,7 +115,6 @@ class Task extends Equatable {
       'credit_price_total_amount': creditPriceTotalAmount,
       'credits_unit': creditsUnit,
       'is_active': isActive,
-      'is_visible': isVisible,
       'PRODUCT__id': productId,
       'PRODUCT__material_category': productMaterialCategory,
       'PRODUCT__material_group_category': productMaterialGroupCategory,
