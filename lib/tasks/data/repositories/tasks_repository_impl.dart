@@ -1,5 +1,6 @@
 import 'package:e_telka/core/data/data_sources/core_data_source.dart';
 import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/vecicky_worker.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
 import 'package:get/get.dart';
 
@@ -80,5 +81,9 @@ class TasksRepositoryImpl extends TasksRepository {
   Future<List<Task>> getAllActiveTasks() {
     return Future.value(
         allTasks.where((element) => element.isActive == true).toList());
+  }
+
+  Future<List<VecickyWorker>> getWorkers() {
+    return tasksRemoteDataSource.getWorkers();
   }
 }
