@@ -1,3 +1,4 @@
+import 'package:e_telka/core/error/error_display.dart';
 import 'package:e_telka/tasks/presentation/tasks_state.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks.dart';
@@ -102,8 +103,7 @@ class _TasksPageState extends State<TasksPage> {
         child: Obx(() {
           switch (logic.state.value.runtimeType) {
             case TasksError:
-              return Center(
-                  child: Text((logic.state.value as TasksError).message));
+              return Center(child: ErrorDisplay(message: logic.state.value.message,));
             case TasksLoading:
               return const Center(child: CircularProgressIndicator());
             default:
