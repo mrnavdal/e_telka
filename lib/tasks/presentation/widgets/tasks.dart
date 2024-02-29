@@ -1,22 +1,21 @@
-import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:e_telka/tasks/presentation/tasks_controller.dart';
 import 'package:e_telka/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TasksListViewParams {
-  final List<Task> tasksToDisplay;
+  final RxList<WorkshopTask> tasksToDisplay;
   final String title;
   final Color backgroundColor;
   final IconData iconData;
   final Color textColor;
 
-  const TasksListViewParams(
-      {required this.title,
-      required this.tasksToDisplay,
-      required this.backgroundColor,
-      required this.iconData,
-      required this.textColor});
+  const TasksListViewParams({required this.title,
+    required this.tasksToDisplay,
+    required this.backgroundColor,
+    required this.iconData,
+    required this.textColor});
 }
 
 class TasksListView extends StatefulWidget {
@@ -30,7 +29,9 @@ class TasksListView extends StatefulWidget {
 
 class _TasksListViewState extends State<TasksListView> {
   final TasksController logic = Get.find<TasksController>();
-  final List<Task> tasks = Get.find<TasksController>().usersTasks;
+  final List<WorkshopTask> tasks = Get
+      .find<TasksController>()
+      .usersTasks;
 
   @override
   Widget build(BuildContext context) {
@@ -39,20 +40,22 @@ class _TasksListViewState extends State<TasksListView> {
     if (tasksToDisplay.isEmpty) {
       return const SizedBox.shrink();
     } else {
-      return Column(
-        children: [
-          tasksSublistHeader(context, params),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: tasksToDisplay.length,
-            itemBuilder: (context, index) {
-              final task = tasksToDisplay[index];
-              return TaskCard(task);
-            },
-          ),
-        ],
-      );
+      return Obx(() {
+        return Column(
+          children: [
+            tasksSublistHeader(context, params),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: tasksToDisplay.length,
+              itemBuilder: (context, index) {
+                final task = tasksToDisplay[index];
+                return TaskCard(task);
+              },
+            ),
+          ],
+        );
+      });
     }
   }
 
@@ -67,12 +70,14 @@ class _TasksListViewState extends State<TasksListView> {
         children: [
           Expanded(
               child: Center(
-            child: Text(params.title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall!
-                    .copyWith(color: params.textColor, fontFamily: 'Poppins')),
-          )),
+                child: Text(params.title,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(
+                        color: params.textColor, fontFamily: 'Poppins')),
+              )),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
             child: Icon(

@@ -1,5 +1,5 @@
 import 'package:e_telka/core/util/date_util.dart';
-import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +14,7 @@ class AllTasks extends StatefulWidget {
 
 class _AllTasksState extends State<AllTasks> {
   final TasksController logic = Get.find<TasksController>();
-  final List<Task> activeTasks = Get.find<TasksController>().activeTasks;
+  final List<WorkshopTask> activeTasks = Get.find<TasksController>().activeTasks;
   @override
   Widget build(BuildContext context) {
     if (activeTasks.isEmpty) {
@@ -36,7 +36,7 @@ class _AllTasksState extends State<AllTasks> {
     }
   }
 
-  Widget activeTaskTile(Task task) {
+  Widget activeTaskTile(WorkshopTask task) {
     final workerName = logic.workers.firstWhere((element) => element.id == task.workerID).name;
     bool isLate = task.plannedEndDate != null && DateUtil().isDateBeforeThisWeek(task.plannedEndDate!);
     return Column(

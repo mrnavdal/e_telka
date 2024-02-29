@@ -39,7 +39,7 @@ class EtelkaApp extends StatelessWidget {
               providers: providers,
               actions: [
                 AuthStateChangeAction<SignedIn>((context, state) {
-                  Get.offAll(const TasksPage());
+                  Get.toNamed('/my-tasks');
                 }),
               ],
             );
@@ -57,7 +57,7 @@ class EtelkaApp extends StatelessWidget {
           auth: FirebaseAuth.instance,
           actions: [
             AuthStateChangeAction<SignedIn>((context, state) {
-              Get.offAll(const TasksPage());
+              Get.toNamed('/my-tasks');
             }),
           ],
         ));

@@ -13,7 +13,9 @@ class TasksLoading extends TasksState {
 }
 
 class TasksError extends TasksState {
-  TasksError() : super('Error');
+  final String message;
+
+  TasksError(this.message) : super('Něco se pokazilo');
 }
 
 class TasksMyTasks extends TasksState {

@@ -1,10 +1,10 @@
-import 'package:e_telka/tasks/domain/entities/task.dart';
+import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
 class TaskDetailPage extends StatefulWidget {
-  final Task task;
+  final WorkshopTask task;
   const TaskDetailPage(this.task, {super.key});
 
   @override

@@ -1,15 +1,14 @@
 import 'package:e_telka/tasks/presentation/pages/task_detail_page.dart';
 import 'package:e_telka/tasks/presentation/tasks_controller.dart';
-import 'package:e_telka/tasks/presentation/widgets/task_detail.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-import '../../domain/entities/task.dart';
+import '../../domain/entities/workshop_task.dart';
 
 class TaskCard extends StatefulWidget {
-  Task task;
+  WorkshopTask task;
   TaskCard(this.task, {super.key});
 
   @override
@@ -46,16 +45,16 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
-  Widget _buildTaskActionButton(BuildContext context, Task task) {
+  Widget _buildTaskActionButton(BuildContext context, WorkshopTask task) {
     if (task.startedDate == null) {
-      return TaskNotStartedButton(task);
+      return taskNotStartedButton(task);
     } else if (task.realizedEndDate == null) {
-      return TaskStartedButton(task);
+      return taskStartedButton(task);
     }
-    return TaskFinishedButton();
+    return taskFinishedButton();
   }
 
-  Widget TaskNotStartedButton(Task task) {
+  Widget taskNotStartedButton(WorkshopTask task) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -66,8 +65,10 @@ class _TaskCardState extends State<TaskCard> {
                   'Jste si jisti, že chcete začít úkol? Tato akce nelze vzít zpět.')
               .then((value) {
             if (value == true) {
-              logic.setTaskToStarted(task);
-              showToast('Úkol byl započat.', Colors.yellow, Colors.white);
+              setState(() {
+                logic.setTaskToStarted(task);
+                showToast('Úkol byl započat.', Colors.yellow, Colors.white);
+              });
             }
           });
         });
@@ -80,7 +81,7 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
-  Widget TaskStartedButton(Task task) {
+  Widget taskStartedButton(WorkshopTask task) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
@@ -96,6 +97,7 @@ class _TaskCardState extends State<TaskCard> {
                 handleSpecialCases(widget.task);
                 showToast(
                     'Výborně! Úkol byl dokončen.', Colors.green, Colors.white);
+                logic.refreshTasks();
               });
             }
           });
@@ -109,7 +111,7 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
-  Widget TaskFinishedButton() {
+  Widget taskFinishedButton() {
     return ElevatedButton(
       onPressed: () {},
       child: const Text('Úkol dokončen'),
@@ -124,7 +126,7 @@ class _TaskCardState extends State<TaskCard> {
   /// - Když uživatel potvrzuje dokončení operace nastříhání, doptat se ho, jestli může dílna začít šicí práce Ano / ne.
   /// -- pokud ne - aktivní úkol se stane pouze úkol výdejka
   /// -- pokud ano - kromě výdejky se aktivní úkoly stanou ještě úkoly následující po úkolu výdejka.
-  void handleSpecialCases(Task task) {
+  void handleSpecialCases(WorkshopTask task) {
     if (task.operation == 'rezervace materiálu') {
       showConfirmationDialog(
               context, 'Dostatek materiálu', 'Je na skladě dostatek materiálu?')

@@ -2,7 +2,7 @@ import 'package:e_telka/core/util/date_util.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Task extends Equatable {
+class WorkshopTask extends Equatable {
   final String id;
   final num creditPriceTotalAmount;
   final num creditsUnit;
@@ -26,7 +26,7 @@ class Task extends Equatable {
   final String productName;
 
 
-  Task({
+  WorkshopTask({
     required this.creditPriceTotalAmount,
     required this.creditsUnit,
     required this.id,
@@ -75,10 +75,10 @@ class Task extends Equatable {
 
       ];
 
-  factory Task.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
+  factory WorkshopTask.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
     var data = snapshot.data()!;
-    return Task(
+    return WorkshopTask(
       id: data['id'],
       operation: data['operation'],
       operationOrderNumber: data['operation_order_number'] as num,

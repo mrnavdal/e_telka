@@ -17,12 +17,9 @@ class TasksPage extends StatefulWidget {
 class _TasksPageState extends State<TasksPage> {
   final logic = Get.find<TasksController>();
 
-  final state = Get.find<TasksController>().state;
-
   @override
   initState() {
     super.initState();
-    state.value = TasksMyTasks();
     initTasks();
   }
 
@@ -103,45 +100,62 @@ class _TasksPageState extends State<TasksPage> {
       ),
       body: Center(
         child: Obx(() {
-          return Column(
-            children: [
-              Expanded(
-                child: RefreshIndicator(
-                    onRefresh: () async {
-                      logic.refreshTasks();
-                    },
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          TasksListView(
-                              params: TasksListViewParams(
-                                  title: 'Zpožděné úkoly',
-                                  tasksToDisplay: logic.delayedTasks,
-                                  backgroundColor:
-                                      colorScheme.secondaryContainer,
-                                  iconData: Icons.error_outline,
-                                  textColor: colorScheme.onSecondaryContainer)),
-                          TasksListView(
-                              params: TasksListViewParams(
-                                  title: 'Úkoly pro tento týden',
-                                  tasksToDisplay: logic.currentWeekTasks,
-                                  backgroundColor: colorScheme.primaryContainer,
-                                  iconData: Icons.calendar_today,
-                                  textColor: colorScheme.onPrimaryContainer)),
-                          TasksListView(
-                              params: TasksListViewParams(
-                                  title: 'Nadcházející úkoly',
-                                  tasksToDisplay: logic.upcomingTasks,
-                                  backgroundColor:
-                                      colorScheme.tertiaryContainer,
-                                  iconData: Icons.calendar_month,
-                                  textColor: colorScheme.onTertiaryContainer)),
-                        ],
-                      ),
-                    )),
-              ),
-            ],
-          );
+          switch (logic.state.value.runtimeType) {
+            case TasksError:
+              return Center(
+                  child: Text((logic.state.value as TasksError).message));
+            case TasksLoading:
+              return const Center(child: CircularProgressIndicator());
+            default:
+              return Column(
+                children: [
+                  Expanded(
+                    child: RefreshIndicator(
+                        onRefresh: () async {
+                          logic.refreshTasks();
+                        },
+                        child: SingleChildScrollView(
+                          child: logic.state is TasksError
+                              ? Center(
+                                  child:
+                                      Text((logic.state as TasksError).message))
+                              : Column(
+                                  children: [
+                                    TasksListView(
+                                        params: TasksListViewParams(
+                                            title: 'Zpožděné úkoly',
+                                            tasksToDisplay: logic.delayedTasks,
+                                            backgroundColor:
+                                                colorScheme.secondaryContainer,
+                                            iconData: Icons.error_outline,
+                                            textColor: colorScheme
+                                                .onSecondaryContainer)),
+                                    TasksListView(
+                                        params: TasksListViewParams(
+                                            title: 'Úkoly pro tento týden',
+                                            tasksToDisplay:
+                                                logic.currentWeekTasks,
+                                            backgroundColor:
+                                                colorScheme.primaryContainer,
+                                            iconData: Icons.calendar_today,
+                                            textColor: colorScheme
+                                                .onPrimaryContainer)),
+                                    TasksListView(
+                                        params: TasksListViewParams(
+                                            title: 'Nadcházející úkoly',
+                                            tasksToDisplay: logic.upcomingTasks,
+                                            backgroundColor:
+                                                colorScheme.tertiaryContainer,
+                                            iconData: Icons.calendar_month,
+                                            textColor: colorScheme
+                                                .onTertiaryContainer)),
+                                  ],
+                                ),
+                        )),
+                  ),
+                ],
+              );
+          }
         }),
       ),
     );

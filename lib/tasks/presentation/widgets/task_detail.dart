@@ -1,10 +1,10 @@
 import 'package:e_telka/core/util/date_util.dart';
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/task.dart';
+import '../../domain/entities/workshop_task.dart';
 
 class TaskDetail extends StatelessWidget {
-  final Task task;
+  final WorkshopTask task;
   const TaskDetail({super.key, required this.task});
 
   @override
