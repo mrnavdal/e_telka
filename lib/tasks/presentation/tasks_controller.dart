@@ -13,7 +13,7 @@ class TasksController extends GetxController {
   final DateUtil dateUtil = Get.find();
   List<WorkshopWorker> workers = <WorkshopWorker>[];
 
-  Rx<TasksState> state = TasksState('TasksState').obs;
+  Rx<TasksState> state = TasksMyTasks().obs;
   var index = 0.obs;
   RxList<WorkshopTask> displayedTasks = <WorkshopTask>[].obs;
   RxList<WorkshopTask> usersTasks = <WorkshopTask>[].obs;
@@ -74,7 +74,7 @@ class TasksController extends GetxController {
     (await tasksRepository.getUsersActiveTasks()).fold(
       (failure) => state = TasksError(failure.message).obs,
       (tasks) async {
-         usersTasks.value = tasks;
+        usersTasks.value = tasks;
         await runFilterTasks();
         state = TasksMyTasks().obs;
       },
@@ -89,17 +89,7 @@ class TasksController extends GetxController {
 
   Future<void> refreshTasks() async {
     state = TasksLoading().obs;
-    (await tasksRepository.getUsersActiveTasks()).fold(
-      (failure) => state = TasksError(failure.message).obs,
-      (tasks) => usersTasks.value = tasks,
-    );
-
-    displayedTasks = usersTasks;
-    if (areTasksFiltered) {
-      filterTasks();
-    }
-    state = TasksMyTasks().obs;
-    update();
+    getMyTasks();
   }
 
   disableFilters() => displayedTasks = usersTasks;

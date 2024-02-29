@@ -82,6 +82,14 @@ class _TasksPageState extends State<TasksPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Center(child: Text('Moje úkoly')),
         actions: [
+          if (GetPlatform.isWeb)
+            IconButton(
+                onPressed: () async {
+                  setState(() {logic.state = TasksLoading().obs;});
+                  await logic.initializeTasks();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.refresh)),
           IconButton(
               onPressed: () => showFilterDialog(context).then((value) {
                     if (value == true) {
@@ -103,7 +111,10 @@ class _TasksPageState extends State<TasksPage> {
         child: Obx(() {
           switch (logic.state.value.runtimeType) {
             case TasksError:
-              return Center(child: ErrorDisplay(message: logic.state.value.message,));
+              return Center(
+                  child: ErrorDisplay(
+                message: logic.state.value.message,
+              ));
             case TasksLoading:
               return const Center(child: CircularProgressIndicator());
             default:
