@@ -4,11 +4,12 @@ import 'package:e_telka/core/util/date_util.dart';
 import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:e_telka/tasks/domain/entities/workshop_worker.dart';
 import 'package:e_telka/tasks/domain/repositories/tasks_repository.dart';
-import 'package:e_telka/tasks/presentation/tasks_state.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_state.dart';
+
 import 'package:get/get.dart';
 
-class TasksController extends GetxController {
-  final TasksRepository tasksRepository = Get.find();
+class TasksLogic extends GetxController {
+  final TasksRepository tasksRepository = Get.find<TasksRepository>();
 
   final DateUtil dateUtil = Get.find();
   List<WorkshopWorker> workers = <WorkshopWorker>[];
@@ -45,17 +46,25 @@ class TasksController extends GetxController {
       .toList()
       .obs;
 
-  Future<void> initializeTasks() async {
+  void initializeTasks() async {
     state = TasksLoading().obs;
-    (await tasksRepository.getWorkers()).fold(
-      (failure) {
-        return state = TasksError(failure.message).obs;
-      },
-      (workers) {
-        this.workers = workers;
-        getActiveTasks();
-      },
-    );
+    tasksRepository.refreshAllTasks();
+    tasksRepository.getWorkers().then((value) => value.fold(
+          (failure) => state = TasksError(failure.message).obs,
+          (workers) {
+            state = TasksMyTasks().obs;
+            this.workers = workers;
+            getActiveTasks();
+          },
+        ));
+  }
+
+  void determineState() {
+    if (index.value == 0) {
+      state = TasksMyTasks().obs;
+    } else if (index.value == 1){
+      state = TasksOverview().obs;
+    }
   }
 
   Future<void> getActiveTasks() async {
@@ -76,7 +85,6 @@ class TasksController extends GetxController {
       (tasks) async {
         usersTasks.value = tasks;
         await runFilterTasks();
-        state = TasksMyTasks().obs;
       },
     );
   }
@@ -99,7 +107,11 @@ class TasksController extends GetxController {
     filterOperations();
     filterStates();
     sortTasks();
-    state = TasksMyTasks().obs;
+    displayedTasks.refresh();
+    delayedTasks.refresh();
+    currentWeekTasks.refresh();
+    upcomingTasks.refresh();
+    determineState();
     update();
   }
 
@@ -158,12 +170,12 @@ class TasksController extends GetxController {
 
   void onSortingFactorChange(String value) {
     selectedSortingFactor = value;
-    update(); // Update the state so that the value is available to views
+     // Update the state so that the value is available to views
   }
 
   void onSortingOrderChange(bool ascending) {
     ascendingOrder = ascending;
-    update(); // Update the state so that the value is available to views
+     // Update the state so that the value is available to views
   }
 
   Future<void> finishTask(WorkshopTask? task) async {

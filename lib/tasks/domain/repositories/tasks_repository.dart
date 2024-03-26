@@ -22,6 +22,8 @@ abstract class TasksRepository {
 
   Future<Either<Failure, List<WorkshopWorker>>> getWorkers();
 
+  Future<void> refreshAllTasks();
+
   // Future<Either<Failure, Task>> getTask(String id);
   //
   // Future<Either<Failure, Task>> createTask(Task task);

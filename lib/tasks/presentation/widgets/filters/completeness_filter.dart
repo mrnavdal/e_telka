@@ -1,9 +1,9 @@
-import 'package:e_telka/tasks/presentation/tasks_controller.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_logic.dart';
 import 'package:flutter/material.dart';
 
 class CompletenessFilter extends StatefulWidget {
   const CompletenessFilter({super.key, required this.logic});
-  final TasksController logic;
+  final TasksLogic logic;
   @override
   State<CompletenessFilter> createState() => _CompletenessFilterState();
 }

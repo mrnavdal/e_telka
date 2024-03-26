@@ -3,7 +3,7 @@ import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../tasks_controller.dart';
+import '../getx/tasks_logic.dart';
 
 class AllTasks extends StatefulWidget {
   const AllTasks({super.key});
@@ -13,25 +13,31 @@ class AllTasks extends StatefulWidget {
 }
 
 class _AllTasksState extends State<AllTasks> {
-  final TasksController logic = Get.find<TasksController>();
-  final List<WorkshopTask> activeTasks = Get.find<TasksController>().activeTasks;
+  final TasksLogic logic = Get.find<TasksLogic>();
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    final List<WorkshopTask> activeTasks = logic.activeTasks;
     if (activeTasks.isEmpty) {
       return const SizedBox.shrink();
     } else {
-      return Column(
-        children: [
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: activeTasks.length,
-            itemBuilder: (context, index) {
-              final task = activeTasks[index];
-              return activeTaskTile(task);
-            },
-          ),
-        ],
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: activeTasks.length,
+              itemBuilder: (context, index) {
+                final task = activeTasks[index];
+                return activeTaskTile(task);
+              },
+            ),
+          ],
+        ),
       );
     }
   }

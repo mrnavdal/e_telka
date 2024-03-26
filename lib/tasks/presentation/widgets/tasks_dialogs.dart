@@ -1,4 +1,4 @@
-import 'package:e_telka/tasks/presentation/tasks_controller.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_logic.dart';
 import 'package:e_telka/tasks/presentation/widgets/filters/sorting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,7 +47,7 @@ Future<bool?> showConfirmationDialog(
 }
 
 showFilterDialog(BuildContext context) {
-  final logic = Get.find<TasksController>();
+  final logic = Get.find<TasksLogic>();
   return showDialog<bool>(
     context: context,
     builder: (context) {

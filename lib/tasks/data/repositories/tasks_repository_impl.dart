@@ -20,79 +20,83 @@ class TasksRepositoryImpl extends TasksRepository {
   List<WorkshopTask> get allTasks => _allTasks;
 
   @override
+  Future<void> refreshAllTasks() async {
+    final result = await tasksRemoteDataSource.getAllTasks();
+    _allTasks = result;
+  }
+
+  @override
   Future<Either<Failure, List<WorkshopTask>>> getUsersActiveTasks() async {
-    try {
+    return await performOperation(() async {
       final userID = await coreRemoteDataSource.getCurrentUserID();
-
-      _allTasks = await tasksRemoteDataSource.getAllTasks();
-
-      // determine which tasks are not completed
-      List<WorkshopTask> incompleteTasks =
-      allTasks.where((element) => element.realizedEndDate == null).toList();
-
-      List<WorkshopTask> usersTasks = incompleteTasks;
-
-      // determine which tasks are user's. If the user is a super user show all
-      if (FirebaseAuth.instance.currentUser?.email != 'super@vecicky.cz') {
-        usersTasks = incompleteTasks
-            .where((element) => element.workerID == userID)
-            .toList();
-      }
-
-      // show only those which are active
-      List<WorkshopTask> tasksShown = usersTasks
-          .where((element) => element.isActive == true && element.workerID != null)
-          .toList();
-
+      List<WorkshopTask> usersTasks = getIncompleteTasksForUser(userID);
+      List<WorkshopTask> tasksShown = getActiveTasksForUser(usersTasks);
       tasksShown.sort((a, b) => a.taskId.compareTo(b.taskId));
+      return tasksShown;
+    });
+  }
 
-      return Right(tasksShown);
-    } on Exception catch (failure) {
-      return Left(ServerFailure(failure.toString()));
+  List<WorkshopTask> getIncompleteTasksForUser(String userID) {
+    List<WorkshopTask> incompleteTasks =
+        allTasks.where((element) => element.realizedEndDate == null).toList();
+    List<WorkshopTask> usersTasks = incompleteTasks;
+    if (FirebaseAuth.instance.currentUser?.email != 'super@vecicky.cz') {
+      usersTasks = incompleteTasks
+          .where((element) => element.workerID == userID)
+          .toList();
     }
+    return usersTasks;
+  }
+
+  List<WorkshopTask> getActiveTasksForUser(List<WorkshopTask> usersTasks) {
+    return usersTasks
+        .where(
+            (element) => element.isActive == true && element.workerID != null)
+        .toList();
   }
 
   @override
   Future<Either<Failure, void>> finishTask(WorkshopTask task) async {
-    try {
-      // sets task as finished and updates it in the database
-      // also sets the following task as active
+    return await performOperation(() async {
       task.realizedEndDate = DateTime.now();
       task.isActive = false;
       await tasksRemoteDataSource.updateTask(task);
-
       final followingTask = getFollowingTask(task);
       if (followingTask != null) {
         followingTask.isActive = true;
         await tasksRemoteDataSource.updateTask(followingTask);
       }
-
-      return Right(null);
-    } on Exception catch (failure) {
-      return Left(ServerFailure(failure.toString()));
-    }
+      await refreshAllTasks();
+    });
   }
 
   @override
   Future<Either<Failure, void>> setTaskToStarted(WorkshopTask task) async {
-    try {
+    return await performOperation(() async {
       task.startedDate = DateTime.now();
       await tasksRemoteDataSource.updateTask(task);
+    });
+  }
 
-      return Right(null);
+  Future<Either<Failure, T>> performOperation<T>(
+      Future<T> Function() operation) async {
+    try {
+      return Right(await operation());
     } on Exception catch (failure) {
       return Left(ServerFailure(failure.toString()));
     }
   }
 
-  /// Možná implementace pro více tasků, ale zatím nechám takhle
   @override
-  WorkshopTask? getPreviousTask(WorkshopTask task) {
-    print(task.id);
-    return allTasks.firstWhere((element) => element.nextId?.contains(task.id) ?? false);
+  Future<Either<Failure, List<WorkshopTask>>> getAllActiveTasks() async {
+    return await performOperation(() async {
+      return allTasks
+          .where(
+              (element) => element.isActive == true && element.workerID != null)
+          .toList();
+    });
   }
 
-  /// Možná implementace pro více tasků, ale zatím nechám takhle
   @override
   WorkshopTask? getFollowingTask(WorkshopTask task) {
     final nextId = task.nextId?.first;
@@ -104,10 +108,12 @@ class TasksRepositoryImpl extends TasksRepository {
   }
 
   @override
-  void updateTask(WorkshopTask task) {
-    tasksRemoteDataSource.updateTask(task);
+  WorkshopTask? getPreviousTask(WorkshopTask task) {
+    return allTasks
+        .firstWhere((element) => element.nextId?.contains(task.id) ?? false);
   }
 
+  @override
   Future<Either<Failure, List<WorkshopWorker>>> getWorkers() async {
     try {
       final result = await tasksRemoteDataSource.getWorkers();
@@ -116,17 +122,9 @@ class TasksRepositoryImpl extends TasksRepository {
       return Left(ServerFailure(failure.toString()));
     }
   }
+
   @override
-  Future<Either<Failure,List<WorkshopTask>>> getAllActiveTasks() async {
-    try {
-      return Right(await allTasks
-          .where(
-              (element) => element.isActive == true && element.workerID != null)
-          .toList());
-    } on Exception catch (failure) {
-      return Left(ServerFailure(failure.toString()));
-    }
+  void updateTask(WorkshopTask task) {
+    tasksRemoteDataSource.updateTask(task);
   }
-
-
 }

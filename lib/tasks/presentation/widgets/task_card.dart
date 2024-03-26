@@ -1,5 +1,6 @@
-import 'package:e_telka/tasks/presentation/pages/task_detail_page.dart';
-import 'package:e_telka/tasks/presentation/tasks_controller.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_state.dart';
+import 'package:e_telka/tasks/presentation/pages/task_detail.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_logic.dart';
 import 'package:e_telka/tasks/presentation/widgets/tasks_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,7 +17,7 @@ class TaskCard extends StatefulWidget {
 }
 
 class _TaskCardState extends State<TaskCard> {
-  final logic = Get.find<TasksController>();
+  final logic = Get.find<TasksLogic>();
 
   void showToast(String message, Color backgroundColor, Color textColor) {
     Fluttertoast.showToast(
@@ -33,7 +34,8 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => TaskDetailPage(widget.task), transition: Transition.rightToLeft);
+        Get.to(() => TaskDetailPage(widget.task),
+            transition: Transition.rightToLeft);
       },
       child: Card(
         child: ListTile(
@@ -86,22 +88,24 @@ class _TaskCardState extends State<TaskCard> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       ),
-      onPressed: () {
+      onPressed: () async {
         setState(() {
           showConfirmationDialog(context, 'Dokončit úkol',
                   'Jste si jisti, že chcete dokončit úkol? Tato akce nelze vzít zpět.')
-              .then((value) {
+              .then((value) async {
             if (value == true) {
               setState(() {
                 logic.finishTask(widget.task);
                 handleSpecialCases(widget.task);
                 showToast(
                     'Výborně! Úkol byl dokončen.', Colors.green, Colors.white);
-                logic.refreshTasks();
+                logic.state = TasksLoading().obs;
+                logic.filterTasks();
               });
             }
           });
         });
+
       },
       child: Text(
         'Dokončit',
