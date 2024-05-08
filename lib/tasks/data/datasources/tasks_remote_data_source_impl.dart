@@ -8,8 +8,15 @@ class TasksRemoteDataSourceImpl extends TasksRemoteDataSource {
   TasksRemoteDataSourceImpl();
   @override
   Future<List<WorkshopTask>> getAllTasks() async {
-    return await firestore.collection('tasks_import').get().then(
-        (value) => value.docs.map((e) => WorkshopTask.fromFirestore(e, null)).toList());
+    var firestore = FirebaseFirestore.instance;
+    var collection = firestore.collection('tasks_import');
+    var getDocuments = await collection.get();
+    List<WorkshopTask> tasks = [];
+    for (var doc in getDocuments.docs) {
+      var task = WorkshopTask.fromFirestore(doc, null);
+      tasks.add(task);
+    }
+    return tasks;
   }
 
   @override

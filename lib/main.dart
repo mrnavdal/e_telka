@@ -16,13 +16,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  if(kDebugMode) {
-
-    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  if (kDebugMode) {
+    // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+    // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   }
-
+  FirebaseFirestore.setLoggingEnabled(true);
   runApp(const EtelkaApp());
 }
 
@@ -36,9 +34,8 @@ class EtelkaApp extends StatelessWidget {
     return GetMaterialApp(
         initialBinding: AppBindings(),
         theme: theme.toThemeData(),
-        initialRoute: FirebaseAuth.instance.currentUser == null
-            ? '/sign-in'
-            : '/tasks',
+        initialRoute:
+            FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/tasks',
         routes: {
           '/sign-in': (context) {
             return SignInScreen(
