@@ -53,7 +53,7 @@ class _AllTasksState extends State<AllTasks> {
             color: isLate ? Colors.red : Colors.green,
           ),
           title: Text('${task.taskId}: ${task.operation}'),
-          subtitle: Text('Odpovědná osoba: ${workerName}'),
+          subtitle: Text('Odpovědná osoba: $workerName'),
           trailing: Text('Plánované dokončení \n ${DateUtil.getFormattedDate(task.plannedEndDate!)}', textAlign: TextAlign.end, style: TextStyle(color: isLate ? Colors.red : Colors.black)),
         ),
         const Divider(),

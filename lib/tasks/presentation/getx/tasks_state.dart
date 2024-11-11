@@ -13,6 +13,7 @@ class TasksLoading extends TasksState {
 }
 
 class TasksError extends TasksState {
+  @override
   final String message;
 
   TasksError(this.message) : super('Něco se pokazilo');

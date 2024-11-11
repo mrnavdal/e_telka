@@ -96,7 +96,7 @@ class _TasksViewState extends State<TasksView> {
       }),
       actions: [
         if (GetPlatform.isWeb)
-          buildIconButton(Icon(Icons.refresh), () async {
+          buildIconButton(const Icon(Icons.refresh), () async {
             await logic.refreshTasks();
             setState(() {
               logic.filterTasks();
@@ -141,7 +141,7 @@ class _TasksViewState extends State<TasksView> {
             case TasksMyTasks:
               return buildMyTasks();
             case TasksOverview:
-              return AllTasks();
+              return const AllTasks();
             default:
               return const SizedBox.shrink();
           }

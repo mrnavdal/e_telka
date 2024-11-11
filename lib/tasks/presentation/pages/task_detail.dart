@@ -1,7 +1,6 @@
 import 'package:e_telka/tasks/domain/entities/workshop_task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:get/get.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final WorkshopTask task;
@@ -60,8 +59,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
         children: [
           Icon(icon, color: Colors.black),
           Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(text, style: TextStyle(color: Colors.black)),
+            padding: const EdgeInsets.all(8.0),
+            child: Text(text, style: const TextStyle(color: Colors.black)),
           ),
         ],
       ),

@@ -10,7 +10,7 @@ class ErrorDisplay extends StatefulWidget {
 }
 
 class _ErrorDisplayState extends State<ErrorDisplay> {
-  bool _isExpanded = false;
+  final bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {

@@ -14,6 +14,8 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
+/// 
+/// 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -53,12 +55,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-      apiKey: "AIzaSyDVNVQZAsXNcSsahLVAXy5KPpi038lMhs8",
-      authDomain: "vecicky-162416.firebaseapp.com",
-      projectId: "vecicky-162416",
-      storageBucket: "vecicky-162416.appspot.com",
-      messagingSenderId: "222665512435",
-      appId: "1:222665512435:web:efce98773a19812e0d2e86",
-      databaseURL: "https://etelka.firebaseio.com",
+      apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
+      authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
+      projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'), 
+      storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+      messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID'),
+      appId: String.fromEnvironment('FIREBASE_APP_ID'),
+      databaseURL: String.fromEnvironment('DATABASE_URL'),
   );
 }

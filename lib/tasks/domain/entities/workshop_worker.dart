@@ -6,7 +6,7 @@ class WorkshopWorker extends Equatable {
   final String name;
   final String email;
 
-  WorkshopWorker({
+  const WorkshopWorker({
     required this.id,
     required this.name,
     required this.email,
