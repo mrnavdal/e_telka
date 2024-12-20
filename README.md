@@ -10,6 +10,7 @@ E-Telka je aplikace pro řízení výroby navržená pro společnost "Věcičky"
 - Sledování stavu úkolů (zahájené/nezahájené)
 - Monitorování termínů dokončení
 - Filtrování úkolů podle různých kritérií
+- Zobrazování úkolů uživatelům za ně zodpovědným
 - Řazení úkolů podle:
   - Počtu kusů
   - Čísla úkolu
