@@ -1,16 +1,51 @@
-# e_telka
+# E-Telka - Systém pro řízení výroby
 
-Aplikace pro řízení výroby ve Věcičkách
+## Přehled
+E-Telka je aplikace pro řízení výroby navržená pro společnost "Věcičky". Pomáhá spravovat a sledovat výrobní úkoly, operace a pracovní postupy v reálném čase.
 
-## Getting Started
+## Funkce
 
-This project is a starting point for a Flutter application.
+### Správa úkolů
+- Zobrazení a správa výrobních úkolů
+- Sledování stavu úkolů (zahájené/nezahájené)
+- Monitorování termínů dokončení
+- Filtrování úkolů podle různých kritérií
+- Řazení úkolů podle:
+  - Počtu kusů
+  - Čísla úkolu
+  - Pořadí operace
+  - Plánovaného data dokončení
 
-A few resources to get you started if this is your first Flutter project:
+### Výrobní proces
+Aplikace zpracovává specifické výrobní postupy:
+1. Rezervace materiálu
+2. Objednávání materiálu
+3. Operace stříhání
+4. Šicí operace
+5. Správa cen
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Aktualizace v reálném čase
+- Integrace Firebase pro synchronizaci dat v reálném čase
+- Push notifikace pro důležité aktualizace
+- Podpora více platforem (Web, iOS, Android, Desktop)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Technický stack
+
+### Frontend
+- Flutter framework pro multiplatformní vývoj
+- GetX pro správu stavu
+- Material Design UI komponenty
+
+### Backend
+- Firebase Realtime Database
+- Firebase Authentication
+- Firebase Cloud Messaging pro notifikace
+- Firebase Hosting pro webové nasazení
+
+### Podporované platformy
+- Web (Progressive Web App)
+- iOS
+- Android
+- macOS
+- Windows
+- Linux
