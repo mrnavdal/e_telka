@@ -1,9 +1,9 @@
-import 'package:e_telka/tasks/presentation/tasks_controller.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_logic.dart';
 import 'package:flutter/material.dart';
 
 class CompletenessFilter extends StatefulWidget {
   const CompletenessFilter({super.key, required this.logic});
-  final TasksController logic;
+  final TasksLogic logic;
   @override
   State<CompletenessFilter> createState() => _CompletenessFilterState();
 }
@@ -17,7 +17,7 @@ class _CompletenessFilterState extends State<CompletenessFilter> {
     final textTheme = theme.textTheme;
     return Column(
       children: [
-        Divider(),
+        const Divider(),
         Text('Stav úkolů:', style: textTheme.labelMedium),
         CheckboxListTile(
           enabled: true,
@@ -46,7 +46,7 @@ class _CompletenessFilterState extends State<CompletenessFilter> {
             });
           },
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }

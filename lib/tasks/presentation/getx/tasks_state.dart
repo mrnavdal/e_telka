@@ -9,15 +9,18 @@ class TasksState extends Equatable {
 }
 
 class TasksLoading extends TasksState {
-  TasksLoading() : super('Loading');
+  TasksLoading() : super('Načítám...');
 }
 
 class TasksError extends TasksState {
-  TasksError() : super('Error');
+  @override
+  final String message;
+
+  TasksError(this.message) : super('Něco se pokazilo');
 }
 
 class TasksMyTasks extends TasksState {
-  TasksMyTasks() : super('MyTasks');
+  TasksMyTasks() : super('Moje úkoly');
 }
 
 class TasksFreeTasks extends TasksState {
@@ -25,5 +28,5 @@ class TasksFreeTasks extends TasksState {
 }
 
 class TasksOverview extends TasksState {
-  TasksOverview() : super('Overview');
+  TasksOverview() : super('Všechny úkoly');
 }

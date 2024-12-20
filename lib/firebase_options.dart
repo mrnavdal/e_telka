@@ -14,6 +14,8 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
+/// 
+/// 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -21,11 +23,20 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -44,42 +55,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDSB27D9_MW5733_61DYEBjGon_0hz4rm0',
-    appId: '1:702700694891:web:dd24481129cfd1f04d702e',
-    messagingSenderId: '702700694891',
-    projectId: 'vyroba-vecicky-test',
-    authDomain: 'vyroba-vecicky-test.firebaseapp.com',
-    databaseURL: 'https://vyroba-vecicky-test-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'vyroba-vecicky-test.appspot.com',
-    measurementId: 'G-FR92653RND',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDoIcHT094YLtJXomnjZcOPKfFGByuSl6Y',
-    appId: '1:702700694891:android:7d0e068a05ab35b74d702e',
-    messagingSenderId: '702700694891',
-    projectId: 'vyroba-vecicky-test',
-    databaseURL: 'https://vyroba-vecicky-test-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'vyroba-vecicky-test.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAEm7PF_zc4nIVagxe0IXlAHHghQJnuiYA',
-    appId: '1:702700694891:ios:43e2bab764696d6d4d702e',
-    messagingSenderId: '702700694891',
-    projectId: 'vyroba-vecicky-test',
-    databaseURL: 'https://vyroba-vecicky-test-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'vyroba-vecicky-test.appspot.com',
-    iosBundleId: 'com.example.eTelka',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAEm7PF_zc4nIVagxe0IXlAHHghQJnuiYA',
-    appId: '1:702700694891:ios:0fa3db24f42adc204d702e',
-    messagingSenderId: '702700694891',
-    projectId: 'vyroba-vecicky-test',
-    databaseURL: 'https://vyroba-vecicky-test-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'vyroba-vecicky-test.appspot.com',
-    iosBundleId: 'com.example.eTelka.RunnerTests',
+      apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
+      authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
+      projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'), 
+      storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+      messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID'),
+      appId: String.fromEnvironment('FIREBASE_APP_ID'),
+      databaseURL: String.fromEnvironment('DATABASE_URL'),
   );
 }

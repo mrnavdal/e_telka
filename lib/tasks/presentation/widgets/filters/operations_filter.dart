@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../tasks_controller.dart';
+import '../../getx/tasks_logic.dart';
 
 class OperationsFilters extends StatefulWidget {
   const OperationsFilters({super.key, required this.logic});
-  final TasksController logic;
+  final TasksLogic logic;
 
   @override
   State<OperationsFilters> createState() => _OperationsFiltersState();
@@ -16,7 +16,7 @@ class _OperationsFiltersState extends State<OperationsFilters> {
     final logic = widget.logic;
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final operations = logic.allTasks.value.map((e) => e.operation).toSet();
+    final operations = logic.usersTasks.value.map((e) => e.operation).toSet();
     return Column(
       children: [
         Text('Operace:', style: textTheme.labelMedium),

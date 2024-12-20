@@ -1,14 +1,15 @@
-import 'package:e_telka/tasks/presentation/tasks_controller.dart';
+import 'package:e_telka/tasks/presentation/getx/tasks_logic.dart';
 import 'package:flutter/material.dart';
 
 class SortingWidget extends StatefulWidget {
   const SortingWidget({super.key, required this.logic});
-final TasksController logic;
+final TasksLogic logic;
   @override
   State<SortingWidget> createState() => _SortingWidgetState();
 }
 
 class _SortingWidgetState extends State<SortingWidget> {
+  @override
   Widget build(BuildContext context) {
     final logic = widget.logic;
     String sortOrder = logic.ascendingOrder ? 'Vzestupně' : 'Sestupně';
